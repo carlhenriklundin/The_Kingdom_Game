@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace The_Kingdom_Game
 {
 
-    class DeckOfPlayingCard
+    public class DeckOfPlayingCard
     {
-        PlayingCard[] theDeckofPlayingCard = new PlayingCard[28];
+        public PlayingCard[] theDeckofPlayingCard = new PlayingCard[28];
 
 
         public void NewDeck()

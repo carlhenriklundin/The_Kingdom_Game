@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace The_Kingdom_Game
 {
     public enum Landscape {Water, Fields, Forest, Mine, Sand };
-    class PlayingCard
+    public class PlayingCard
     {
         public int cardNumber { get;}
-        
-        public Landscape rightSideLandscape {get;}
+
+        public Landscape? rightSideLandscape { get; } = null;
         public int rightSideNumberOfCrown {get;}
 
-        public Landscape leftSideLandscape {get;}
+        public Landscape? leftSideLandscape { get; } = null;
         public int leftSideNumberOfCrown {get;}
 
         public PlayingCard(int cardNumber)
