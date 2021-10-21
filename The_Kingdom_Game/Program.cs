@@ -6,7 +6,10 @@ namespace The_Kingdom_Game
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            DeckOfPlayingCard myDeck = new DeckOfPlayingCard();
+            myDeck.NewDeck();
+            myDeck.Suffle();
+            myDeck.PrintDeck();
         }
     }
 }

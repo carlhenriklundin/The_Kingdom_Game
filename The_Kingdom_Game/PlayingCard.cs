@@ -6,15 +6,32 @@ using System.Threading.Tasks;
 
 namespace The_Kingdom_Game
 {
+    public enum Landscape {Water, Fields, Forest, Mine, Sand };
     class PlayingCard
     {
-        int cardNumber { get; init; }
+        public int cardNumber { get;}
         
-        int xLandscape { get; init; }
-        int xNumberOfCrown { get; init; }
+        public Landscape rightSideLandscape {get;}
+        public int rightSideNumberOfCrown {get;}
 
-        int yLandscape { get; init; }
-        int yNumberOfCrown { get; init; }
+        public Landscape leftSideLandscape {get;}
+        public int leftSideNumberOfCrown {get;}
+
+        public PlayingCard(int cardNumber)
+        {
+            Random random = new Random();
+            this.cardNumber = cardNumber;
+            rightSideLandscape = (Landscape)random.Next(0, 5);
+            leftSideLandscape = (Landscape)random.Next(0, 5);
+
+            if (cardNumber > 17)
+            {
+                rightSideNumberOfCrown = random.Next(0, 4);
+                leftSideNumberOfCrown = random.Next(0, 4);
+            }
+        }
+        public override string ToString() => $"{rightSideLandscape}({rightSideNumberOfCrown}){leftSideLandscape,20}({leftSideNumberOfCrown})";
+       
 
     }
 }
