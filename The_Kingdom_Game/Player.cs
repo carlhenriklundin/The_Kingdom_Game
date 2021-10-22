@@ -10,6 +10,7 @@ namespace The_Kingdom_Game
     {
         public (Landscape landscape, int numberOfCrown)[,] Board = new (Landscape, int)[9, 9];
         
+        
         public Player()
         {
             Board[4, 4] = (Landscape.Water, 0);
@@ -17,42 +18,43 @@ namespace The_Kingdom_Game
 
         public void InsertPlayingCard(PlayingCard card)
         {
-            Console.Write($"Vilken sida av kortet {card.ToString()} vill du börja med att lägga ut (höger eller vänster?");
-            string input = Console.ReadLine();
-            if (input == "vänster") (card.rightSide, card.leftSide) = (card.leftSide, card.leftSide);
-
-            (int row, int column) firstSide = GetPosition(card.rightSide.landscape);
-            (int row, int column) secondSide = GetPosition(card.leftSide.landscape);
-
-            (Board[firstSide.row, firstSide.column], Board[secondSide.row, secondSide.column]) = (card.rightSide, card.leftSide);
+            GetPosition(card, out (int row, int column) right, out (int row, int column) left);
+           
+            (Board[right.row, right.column], Board[left.row, left.column]) = (card.rightSide, card.leftSide);
         }
 
-        public (int, int) GetPosition(Landscape landscape)
+        public void GetPosition(PlayingCard card, out (int, int) rightPosition, out (int, int) leftPosition) 
         {
-            Console.Write($"I vilken rad ska spelkortet läggas in i?");
+            bool legal = false;
+
+            do
+            {
+                rightPosition = AskForPosition();
+                leftPosition = AskForPosition();
+                legal = CheckIfPositionIsLegal(rightPosition, leftPosition, card.rightSide.landscape);
+            } while (!legal);
+         
+        }
+        
+        public (int, int) AskForPosition()
+        { 
+            Console.Write($"I vilken rad ska första spelkortet läggas in i?");
             int rad = Convert.ToInt32(Console.ReadLine());
             Console.Write($"I vilken column ska spelkortet läggas in i?");
             int column = Convert.ToInt32(Console.ReadLine());
-
-            CheckIfPositionIsLegal(rad,column, landscape, true);
-
             return (rad, column);
         }
 
-
-        public bool CheckIfPositionIsLegal(int row, int column, Landscape landscape, bool firstCard)
+        public bool CheckIfPositionIsLegal((int row, int column) right, (int row, int column) left, Landscape landscape)
         {
-            if (firstCard && (Board[row, column].landscape == Landscape.Empty) && (Board[row - 1, column].landscape == landscape || Board[row, column + 1].landscape == landscape || Board[row + 1, column].landscape == landscape || Board[row, column - 1].landscape == landscape))
-                
-            if (!firstCard && Board[row, column].landscape == Landscape.Empty)
+            Landscape king = Landscape.King;
+            bool isRightPositionEmpty = Board[right.row, right.column].landscape == Landscape.Empty;
+            bool isLeftPositionEmpty = Board[left.row, left.column].landscape == Landscape.Empty;
+            bool isRightLandscapeConnected = Board[right.row - 1, right.column].landscape == landscape || Board[right.row, right.column + 1].landscape == landscape || Board[right.row + 1, right.column].landscape == landscape || Board[right.row, right.column - 1].landscape == landscape;
+            bool isRightCardConnectedWithKing = Board[right.row - 1, right.column].landscape == king || Board[right.row, right.column + 1].landscape == king || Board[right.row + 1, right.column].landscape == king || Board[right.row, right.column - 1].landscape == king;
 
-
-
-
-
-                return true;
-
-                return false;
+            if (isRightPositionEmpty && isLeftPositionEmpty && (isRightLandscapeConnected || isRightCardConnectedWithKing)) return true;
+            else return false;
         }
 
         
@@ -64,7 +66,6 @@ namespace The_Kingdom_Game
                 for (int column = 0; column < Board.GetLength(1); column++)
                 {
                     Console.Write($"{Board[rad, column],-12}");
-                    if (Board[rad, column] == null) Console.Write("null");
                 }
                 Console.WriteLine();
                 Console.WriteLine();
