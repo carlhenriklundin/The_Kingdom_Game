@@ -19,8 +19,8 @@ namespace The_Kingdom_Game
         {
             Random random = new Random();
             this.cardNumber = cardNumber;
-            rightSide = ((Landscape)random.Next(0, 5), 0);
-            leftSide = ((Landscape)random.Next(0, 5), 0);
+            rightSide = ((Landscape)random.Next(2, 8), 0);
+            leftSide = ((Landscape)random.Next(2, 8), 0);
 
             if (cardNumber > 17)
             {
