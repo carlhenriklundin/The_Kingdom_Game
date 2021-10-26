@@ -39,7 +39,5 @@ namespace The_Kingdom_Game
             }
         }        
         
-
-
     }
 }

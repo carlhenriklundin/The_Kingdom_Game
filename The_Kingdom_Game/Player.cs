@@ -9,10 +9,12 @@ namespace The_Kingdom_Game
     class Player
     {
         string name;
-        int point;
+        int score;
         public (Landscape landscape, int numberOfCrown)[,] Board = new (Landscape, int)[9, 9];
         static int numberOfPlayer;
         
+
+
         public Player()
         {
             Board[4, 4] = (Landscape.King, 0);
@@ -23,51 +25,52 @@ namespace The_Kingdom_Game
         
         public void InsertPlayingCard(PlayingCard card)
         {
-            GetPosition(card, out (int row, int column) right, out (int row, int column) left);
-           
-            (Board[right.row, right.column], Board[left.row, left.column]) = (card.rightSide, card.leftSide);
+            (int row, int column) rightPosition;
+            (int row, int column) leftPosition;
+
+            ((rightPosition), (leftPosition)) = GetPosition(card);
+
+            (Board[rightPosition.row, rightPosition.column]) = card.rightSideContent;
+            (Board[leftPosition.row, leftPosition.column]) = card.leftSideContent;
         }
 
-        public void GetPosition(PlayingCard card, out (int, int) rightPosition, out (int, int) leftPosition) 
+        public ((int, int), (int, int)) GetPosition(PlayingCard card) 
         {
+            ((int, int), (int, int)) position;
             bool legal = false;
             Console.WriteLine(card.ToString());
             do
             {
-                rightPosition = AskForPosition();
-                leftPosition = AskForPosition();
-                legal = CheckIfPositionIsLegal(rightPosition, leftPosition, card.rightSide.landscape);
+              position = AskForPosition();
+              legal = CheckIfPositionIsLegal(position, card.rightSideContent.landscape);
             } while (!legal);
-         
-        }
-        
-        public (int, int) AskForPosition()
-        { 
-           
-            Console.Write($"I vilken rad ska första spelkortet läggas in i?");
-            int rad = Convert.ToInt32(Console.ReadLine());
-            Console.Write($"I vilken column ska spelkortet läggas in i?");
-            int column = Convert.ToInt32(Console.ReadLine());
-            return (rad, column);
+
+            return position;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param right position="right"></param>
-        /// <param left position="left"></param>
-        /// <param right landscape="landscape"></param>
-        /// <returns></returns>
-        public bool CheckIfPositionIsLegal((int row, int column) right, (int row, int column) left, Landscape landscape)
+        public ((int, int), (int, int)) AskForPosition()
         {
-            Landscape king = Landscape.King;
-            bool isRightPositionEmpty = Board[right.row, right.column].landscape == Landscape.Empty;
-            bool isLeftPositionEmpty = Board[left.row, left.column].landscape == Landscape.Empty;
-            bool isRightConnectedWithLandscape = Board[right.row - 1, right.column].landscape == landscape || Board[right.row, right.column + 1].landscape == landscape || Board[right.row + 1, right.column].landscape == landscape || Board[right.row, right.column - 1].landscape == landscape;
-            bool isRightConnectedWithKing = Board[right.row - 1, right.column].landscape == king || Board[right.row, right.column + 1].landscape == king || Board[right.row + 1, right.column].landscape == king || Board[right.row, right.column - 1].landscape == king;
+            Console.WriteLine("Vart ska spelkortet placeras på spelplanen? (Right row; Right column; Left row; Left column. Ex: 0;1;2;3)");
+            string[] sInput = Console.ReadLine().Split(';');
+
+            int rightX = Convert.ToInt32(sInput[0]);
+            int rightY = Convert.ToInt32(sInput[1]);
+            int leftX = Convert.ToInt32(sInput[2]);
+            int leftY = Convert.ToInt32(sInput[3]);
+
+            return ((rightX, rightY), (leftX, leftY));
+        }
+
+
+            public bool CheckIfPositionIsLegal(((int x, int y) right, (int x, int y) left) position, Landscape landscape)
+        {       
+            bool isRightPositionEmpty = Board[position.right.x, position.right.y].landscape == Landscape.Empty;
+            bool isLeftPositionEmpty = Board[position.left.x, position.left.y].landscape == Landscape.Empty;
+            bool isRightConnectedWithSameLandscape = Board[position.right.y - 1, position.right.x].landscape == landscape || Board[position.right.y, position.right.x + 1].landscape == landscape || Board[position.right.y + 1, position.right.x].landscape == landscape || Board[position.right.y, position.right.x - 1].landscape == landscape;
+            bool isRightConnectedWithKing = Board[position.right.y - 1, position.right.x].landscape == Landscape.King || Board[position.right.y, position.right.x + 1].landscape == Landscape.King || Board[position.right.y + 1, position.right.x].landscape == Landscape.King || Board[position.right.y, position.right.x - 1].landscape == Landscape.King;
             // bool isRightConnectedWithLeft
 
-            if (isRightPositionEmpty && isLeftPositionEmpty && (isRightConnectedWithLandscape || isRightConnectedWithKing)) return true;
+            if (isRightPositionEmpty && isLeftPositionEmpty && (isRightConnectedWithSameLandscape || isRightConnectedWithKing)) return true;
             else return false;
         }
 
